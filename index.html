@@ -67,9 +67,22 @@
             background-color: #0f172a;
             color: white;
         }
+
+        .mrs-read-only button:not([data-readonly-allowed]),
+        .mrs-read-only input,
+        .mrs-read-only textarea,
+        .mrs-read-only select {
+            pointer-events: none;
+            opacity: 0.55;
+        }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col" x-data="cotizadorApp()" x-init="initApp()">
+    <script>
+        const mrsSession = JSON.parse(sessionStorage.getItem('mrs_session') || 'null');
+        if (!mrsSession) window.location.replace('login.html');
+        if (mrsSession && mrsSession.rol !== 'superusuario') document.documentElement.classList.add('mrs-read-only');
+    </script>
 
     <!-- Header / Navbar -->
     <header class="bg-slate-900 text-white shadow-md no-print sticky top-0 z-40">
@@ -118,6 +131,11 @@
                         <i class="fa-solid" :class="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
                     </button>
                 </div>
+
+                <button @click="cerrarSesion()" class="hidden md:inline-flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-700" data-readonly-allowed>
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Salir</span>
+                </button>
             </div>
         </div>
 
@@ -798,6 +816,7 @@
 
                 // Inicialización con LocalStorage
                 initApp() {
+                    this.usuarioActual = JSON.parse(sessionStorage.getItem('mrs_session') || 'null');
                     const localEmpresa = localStorage.getItem('mrs_empresa');
                     if (localEmpresa) {
                         this.empresa = JSON.parse(localEmpresa);
@@ -812,6 +831,11 @@
                     if (localHistorial) {
                         this.historial = JSON.parse(localHistorial);
                     }
+                },
+
+                cerrarSesion() {
+                    sessionStorage.removeItem('mrs_session');
+                    window.location.href = 'login.html';
                 },
 
                 showToast(message, type = 'success') {
