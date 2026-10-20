@@ -1,0 +1,8 @@
+# Datos locales y archivos temporales
+*.xlsx
+~$*.xlsx
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
