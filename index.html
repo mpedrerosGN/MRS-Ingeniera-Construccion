@@ -80,8 +80,13 @@
         .app-card:hover { box-shadow: 0 14px 30px rgba(15, 23, 42, .08); }
         .topbar { background: linear-gradient(115deg, #0f172a 0%, #162b4d 58%, #075985 100%); }
         .action-bar { position: sticky; top: 4.5rem; z-index: 30; backdrop-filter: blur(10px); }
+        .section-heading { letter-spacing: -.02em; }
+        .quick-action { box-shadow: 0 8px 18px rgba(2, 132, 199, .16); }
+        .quick-action:hover { transform: translateY(-1px); box-shadow: 0 12px 24px rgba(2, 132, 199, .24); }
+        .mobile-tabbar { box-shadow: 0 -8px 24px rgba(15, 23, 42, .08); }
         @media (max-width: 768px) {
             .action-bar { top: 0; }
+            main { padding-bottom: 5rem; }
         }
     </style>
 </head>
@@ -230,8 +235,11 @@
                     
                     <!-- Datos Encabezado / Cliente -->
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                        <h3 class="font-bold text-slate-800 text-base border-b pb-2 flex items-center justify-between">
+                        <h3 class="section-heading font-bold text-slate-800 text-base border-b pb-2 flex items-center justify-between gap-3">
                             <span><i class="fa-solid fa-address-card text-sky-600 me-2"></i>Datos del Cliente & Fecha</span>
+                            <button @click="abrirBusquedaRut()" type="button" class="quick-action shrink-0 rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1.5 text-xs font-semibold text-sky-700 hover:bg-sky-100">
+                                <i class="fa-solid fa-users mr-1"></i><span class="hidden sm:inline">Clientes</span>
+                            </button>
                         </h3>
 
                         <div class="space-y-3">
