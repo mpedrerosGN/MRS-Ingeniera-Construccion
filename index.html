@@ -168,6 +168,11 @@
             .action-bar > div:last-child button:last-child { grid-column: span 2; }
             .editor-card { padding: 1rem; }
             .editor-card h3 { font-size: .9rem; }
+            .editor-card .flex.space-x-2 { min-width: 0; width: 100%; }
+            .editor-card .flex.space-x-2 select,
+            .editor-card .flex.space-x-2 input { min-width: 0; width: 100%; text-overflow: ellipsis; overflow: hidden; }
+            .editor-card .flex.space-x-2 select { flex: 1 1 auto; }
+            .editor-card .flex.space-x-2 > button { flex: 0 0 2.75rem; }
             .grid.grid-cols-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
             .grid.grid-cols-3 > div:last-child { grid-column: span 2; }
             .pdf-document { padding: 1rem !important; }
