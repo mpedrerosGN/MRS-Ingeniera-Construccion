@@ -1194,6 +1194,9 @@
                 },
 
                 nuevaCotizacion() {
+                    const confirmar = confirm('¿Desea comenzar una nueva cotización? Se borrarán los datos actuales que aún no estén guardados.');
+                    if (!confirmar) return;
+
                     this.cotizacion = {
                         correlativo: this.generarCorrelativo(),
                         fecha: this.fechaActualISO(),
