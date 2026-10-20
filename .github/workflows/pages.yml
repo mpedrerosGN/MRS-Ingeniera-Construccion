@@ -27,7 +27,7 @@ jobs:
       - name: Prepare site
         run: |
           mkdir -p _site
-          cp Index.html _site/index.html
+          cp index.html _site/index.html
           cp "logo milton.png" _site/
 
       - name: Setup Pages
