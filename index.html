@@ -226,6 +226,34 @@
 
     <!-- Main Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+        <datalist id="unidadesConstruccion">
+            <option value="gl">Global</option>
+            <option value="un">Unidad</option>
+            <option value="m">Metro lineal</option>
+            <option value="m2">Metro cuadrado</option>
+            <option value="m3">Metro cúbico</option>
+            <option value="cm">Centímetro</option>
+            <option value="mm">Milímetro</option>
+            <option value="kg">Kilogramo</option>
+            <option value="t">Tonelada</option>
+            <option value="l">Litro</option>
+            <option value="saco">Saco</option>
+            <option value="bolsa">Bolsa</option>
+            <option value="caja">Caja</option>
+            <option value="rollo">Rollo</option>
+            <option value="plancha">Plancha</option>
+            <option value="barra">Barra</option>
+            <option value="perfil">Perfil</option>
+            <option value="pza">Pieza</option>
+            <option value="jgo">Juego</option>
+            <option value="set">Set</option>
+            <option value="hr">Hora</option>
+            <option value="día">Día</option>
+            <option value="jornada">Jornada</option>
+            <option value="visita">Visita</option>
+            <option value="servicio">Servicio</option>
+            <option value="faena">Faena</option>
+        </datalist>
         
         <!-- Flash Toast Notification -->
         <div x-show="toast.show" x-transition x-cloak class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border-l-4" :class="toast.type === 'success' ? 'border-emerald-500' : 'border-amber-500'">
@@ -372,7 +400,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">Unidad</label>
-                                    <input type="text" x-model="nuevoItem.unidad" placeholder="gl, unidad..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                                    <input type="text" list="unidadesConstruccion" x-model="nuevoItem.unidad" placeholder="Buscar unidad..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">P. Unitario ($)</label>
@@ -642,7 +670,7 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Unidad de Medida</label>
-                                <input type="text" x-model="formCatalogo.unidad" placeholder="gl, Unidad, m2..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                                <input type="text" list="unidadesConstruccion" x-model="formCatalogo.unidad" placeholder="Buscar unidad..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Precio Unitario ($ CLP)</label>
