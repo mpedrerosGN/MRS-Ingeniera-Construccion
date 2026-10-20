@@ -94,8 +94,8 @@
                         <img :src="empresa.logo" alt="Logo" class="h-10 w-auto object-contain rounded bg-white p-1">
                     </template>
                     <template x-if="!empresa.logo">
-                        <div class="h-10 w-10 bg-sky-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                            <i class="fa-solid me-0.5 fa-file-invoice-dollar"></i>
+                        <div class="h-10 w-28 bg-white rounded-lg flex items-center justify-center overflow-hidden">
+                            <img src="logo milton.png" alt="Logo MRS" class="max-h-full max-w-full object-contain p-1">
                         </div>
                     </template>
                     <div>
@@ -733,7 +733,7 @@
                     direccion: 'Quebrada de Riffo Lt 1-G, Florida',
                     fono: '+569 8473 1915',
                     encargadaPor: 'Mercado público',
-                    logo: ''
+                    logo: 'logo milton.png'
                 },
 
                 // Cotización Activa en el Editor
@@ -820,6 +820,9 @@
                     const localEmpresa = localStorage.getItem('mrs_empresa');
                     if (localEmpresa) {
                         this.empresa = JSON.parse(localEmpresa);
+                    }
+                    if (!this.empresa.logo) {
+                        this.empresa.logo = 'logo milton.png';
                     }
 
                     const localCatalogo = localStorage.getItem('mrs_catalogo');
