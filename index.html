@@ -152,6 +152,31 @@
             .action-bar { top: 0; }
             main { padding-bottom: 5rem; }
         }
+        @media (max-width: 640px) {
+            html, body { overflow-x: hidden; }
+            .topbar .max-w-7xl { padding-left: .75rem; padding-right: .75rem; }
+            .topbar .h-16 { height: auto; min-height: 4rem; padding: .65rem 0; }
+            .topbar .h-16 > div:first-child { min-width: 0; gap: .55rem; }
+            .topbar .h-16 > div:first-child > img { height: 2.35rem; max-width: 3.6rem; }
+            .topbar h1 { font-size: .9rem; line-height: 1.1; max-width: 15rem; }
+            .topbar p { font-size: .62rem; line-height: 1.1; }
+            main { padding: .75rem; }
+            .action-bar { position: static; padding: .75rem; gap: .7rem; }
+            .action-bar > div:first-child { width: 100%; justify-content: space-between; }
+            .action-bar > div:last-child { width: 100%; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .45rem; }
+            .action-bar > div:last-child button { width: 100%; justify-content: center; padding: .65rem .4rem; font-size: .72rem; }
+            .action-bar > div:last-child button:last-child { grid-column: span 2; }
+            .editor-card { padding: 1rem; }
+            .editor-card h3 { font-size: .9rem; }
+            .grid.grid-cols-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .grid.grid-cols-3 > div:last-child { grid-column: span 2; }
+            .pdf-document { padding: 1rem !important; }
+            .pdf-document .document-brandbar { padding: 1rem !important; }
+            .pdf-document .document-brandbar h2 { font-size: .8rem; }
+            .pdf-document .document-brandbar p { font-size: .62rem; }
+            .fixed.inset-0 { padding: .75rem; }
+            .fixed.inset-0 > div { max-height: calc(100dvh - 1.5rem); overflow-y: auto; }
+        }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col" x-data="cotizadorApp()" x-init="initApp()">
