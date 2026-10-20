@@ -418,14 +418,14 @@
                         <div class="space-y-2">
                             <label class="block text-xs font-semibold text-slate-600">Seleccionar del Catálogo:</label>
                             <div class="flex space-x-2">
-                                <select x-model="itemSeleccionadoCatalogo" class="flex-grow border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                                <select x-model="itemSeleccionadoCatalogo" class="min-w-0 flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
                                     <option value="">-- Seleccione un ítem predefinido --</option>
                                     <template x-for="(prod, idx) in catalogo" :key="idx">
                                         <option :value="idx" x-text="`${prod.descripcion.substring(0, 45)}... ($${formatearNumero(prod.precioUnitario)})`"></option>
                                     </template>
                                 </select>
-                                <button @click="agregarDesdeCatalogo()" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition">
-                                    <i class="fa-solid fa-plus"></i>
+                                <button @click="agregarDesdeCatalogo()" class="shrink-0 whitespace-nowrap bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition">
+                                    <i class="fa-solid fa-plus mr-1"></i><span class="hidden sm:inline">Agregar</span>
                                 </button>
                             </div>
                         </div>
