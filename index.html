@@ -75,6 +75,7 @@
             pointer-events: none;
             opacity: 0.55;
         }
+        .mrs-read-only [data-admin-only] { display: none !important; }
 
         .app-card { transition: transform .2s ease, box-shadow .2s ease; }
         .app-card:hover { box-shadow: 0 14px 30px rgba(15, 23, 42, .08); }
@@ -190,7 +191,7 @@
                         <i class="fa-solid fa-list-check"></i>
                         <span>Catálogo de Precios</span>
                     </button>
-                    <button @click="tab = 'configuracion'" :class="tab === 'configuracion' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'" class="px-3 py-2 rounded-md text-sm font-medium transition flex items-center space-x-2">
+                    <button data-admin-only @click="tab = 'configuracion'" :class="tab === 'configuracion' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'" class="px-3 py-2 rounded-md text-sm font-medium transition flex items-center space-x-2">
                         <i class="fa-solid fa-building"></i>
                         <span>Empresa & Logo</span>
                     </button>
@@ -225,7 +226,7 @@
                     <i class="fa-solid fa-list-check"></i>
                     <span>Catálogo de Precios</span>
                 </button>
-                <button @click="tab = 'configuracion'; mobileMenuOpen = false" :class="tab === 'configuracion' ? 'bg-sky-700 text-white' : 'text-slate-300'" class="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-2">
+                <button data-admin-only @click="tab = 'configuracion'; mobileMenuOpen = false" :class="tab === 'configuracion' ? 'bg-sky-700 text-white' : 'text-slate-300'" class="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-2">
                     <i class="fa-solid fa-building"></i>
                     <span>Empresa & Logo</span>
                 </button>
@@ -740,7 +741,7 @@
         <!-- ========================================================= -->
         <!-- TAB 4: CONFIGURACIÓN DE LA EMPRESA Y LOGO                 -->
         <!-- ========================================================= -->
-        <div x-show="tab === 'configuracion'" class="space-y-6" x-cloak>
+        <div x-show="tab === 'configuracion' && usuarioActual && usuarioActual.rol === 'superusuario'" class="space-y-6" x-cloak>
             <div class="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 space-y-6">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-building text-sky-600 me-2"></i>Configuración de Datos Emisor</h2>
