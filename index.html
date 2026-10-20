@@ -75,7 +75,8 @@
             pointer-events: none;
             opacity: 0.55;
         }
-        .mrs-read-only [data-admin-only] { display: none !important; }
+        .mrs-read-only [data-admin-only],
+        .mrs-operator [data-admin-only] { display: none !important; }
 
         .app-card { transition: transform .2s ease, box-shadow .2s ease; }
         .app-card:hover { box-shadow: 0 14px 30px rgba(15, 23, 42, .08); }
@@ -153,7 +154,12 @@
     <script>
         const mrsSession = JSON.parse(sessionStorage.getItem('mrs_session') || 'null');
         if (!mrsSession) window.location.replace('login.html');
-        if (mrsSession && mrsSession.rol !== 'superusuario') document.documentElement.classList.add('mrs-read-only');
+        if (mrsSession && ['mriquelme', 'mriquelmde'].includes(mrsSession.username)) {
+            mrsSession.rol = 'operador';
+            sessionStorage.setItem('mrs_session', JSON.stringify(mrsSession));
+        }
+        if (mrsSession && mrsSession.rol === 'consulta') document.documentElement.classList.add('mrs-read-only');
+        if (mrsSession && mrsSession.rol === 'operador') document.documentElement.classList.add('mrs-operator');
     </script>
 
     <!-- Header / Navbar -->
