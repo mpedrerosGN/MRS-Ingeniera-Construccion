@@ -177,7 +177,7 @@
 
                 <!-- Navigation Tabs -->
                 <nav class="hidden md:flex space-x-1">
-                    <button @click="tab = 'editor'" :class="tab === 'editor' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'" class="px-3 py-2 rounded-md text-sm font-medium transition flex items-center space-x-2">
+                <button @click="nuevaCotizacion(); tab = 'editor'" :class="tab === 'editor' ? 'bg-sky-700 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'" class="px-3 py-2 rounded-md text-sm font-medium transition flex items-center space-x-2">
                         <i class="fa-solid fa-pen-to-square"></i>
                         <span>Nueva Cotización</span>
                     </button>
@@ -213,7 +213,7 @@
         <!-- Mobile Navigation Menu -->
         <div class="md:hidden border-t border-slate-800" x-show="mobileMenuOpen" x-cloak>
             <div class="px-2 pt-2 pb-3 space-y-1">
-                <button @click="tab = 'editor'; mobileMenuOpen = false" :class="tab === 'editor' ? 'bg-sky-700 text-white' : 'text-slate-300'" class="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-2">
+                <button @click="nuevaCotizacion(); tab = 'editor'; mobileMenuOpen = false" :class="tab === 'editor' ? 'bg-sky-700 text-white' : 'text-slate-300'" class="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-2">
                     <i class="fa-solid fa-pen-to-square"></i>
                     <span>Nueva Cotización</span>
                 </button>
@@ -477,15 +477,9 @@
                             <div class="document-title bg-slate-900 text-white text-center font-bold text-lg py-2 rounded-t uppercase tracking-wider">
                                 COTIZACIÓN
                             </div>
-                            <div class="grid grid-cols-2 border border-t-0 border-slate-400 bg-slate-50 text-xs py-2 px-4 rounded-b font-medium">
-                                <div>
-                                    <span class="font-semibold text-slate-600">Fecha:</span>
-                                    <span class="ms-2 font-bold text-slate-900" x-text="formatearFecha(cotizacion.fecha)"></span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="font-semibold text-slate-600">Cotización N°:</span>
-                                    <span class="ms-2 font-bold text-sky-900 font-mono text-sm" x-text="cotizacion.correlativo"></span>
-                                </div>
+                            <div class="flex justify-between border border-t-0 border-slate-400 bg-slate-50 text-xs py-2 px-4 rounded-b font-medium">
+                                <span class="font-semibold text-slate-600">Fecha de emisión</span>
+                                <span class="font-bold text-slate-900" x-text="formatearFecha(cotizacion.fecha)"></span>
                             </div>
                         </div>
 
@@ -878,21 +872,14 @@
 
                 // Cotización Activa en el Editor
                 cotizacion: {
-                    correlativo: '2362-48-COT26',
-                    fecha: new Date().toISOString().split('T')[0],
-                    clienteEmpresa: 'I MUNICIPALIDAD DE TALCAHUANO',
-                    clienteRut: '69.150.800-5',
-                    clienteDireccion: 'Juan Antonio Ríos 1315, Talcahuano, Región del Biobío',
+                    correlativo: '',
+                    fecha: '',
+                    clienteEmpresa: '',
+                    clienteRut: '',
+                    clienteDireccion: '',
                     encargadaPor: 'Mercado público',
                     incluyeIva: false,
-                    items: [
-                        {
-                            descripcion: 'Chapa sobreponer doble cerrojo',
-                            cantidad: 1,
-                            unidad: 'Unidad',
-                            precioUnitario: 19000
-                        }
-                    ]
+                    items: []
                 },
 
                 // Formulario nuevo ítem para la cotización
@@ -958,6 +945,8 @@
                 // Inicialización con LocalStorage
                 initApp() {
                     this.usuarioActual = JSON.parse(sessionStorage.getItem('mrs_session') || 'null');
+                    if (!this.cotizacion.fecha) this.cotizacion.fecha = this.fechaActualISO();
+                    if (!this.cotizacion.correlativo) this.cotizacion.correlativo = this.generarCorrelativo();
                     const localEmpresa = localStorage.getItem('mrs_empresa');
                     if (localEmpresa) {
                         this.empresa = JSON.parse(localEmpresa);
@@ -1044,6 +1033,22 @@
                     return fechaStr;
                 },
 
+                fechaActualISO() {
+                    const ahora = new Date();
+                    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+                    const dia = String(ahora.getDate()).padStart(2, '0');
+                    return `${ahora.getFullYear()}-${mes}-${dia}`;
+                },
+
+                generarCorrelativo() {
+                    const ahora = new Date();
+                    const dia = String(ahora.getDate()).padStart(2, '0');
+                    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+                    const actual = Number(localStorage.getItem('mrs_correlativo_contador') || 0) + 1;
+                    localStorage.setItem('mrs_correlativo_contador', String(actual));
+                    return `MRS-${dia}-${mes}-COT${String(actual).padStart(2, '0')}`;
+                },
+
                 // Cálculos Totales Cotización
                 calcularNeto() {
                     return this.cotizacion.items.reduce((acc, item) => acc + (item.cantidad * item.precioUnitario), 0);
@@ -1097,8 +1102,8 @@
 
                 nuevaCotizacion() {
                     this.cotizacion = {
-                        correlativo: `${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(10 + Math.random() * 90)}-COT26`,
-                        fecha: new Date().toISOString().split('T')[0],
+                        correlativo: this.generarCorrelativo(),
+                        fecha: this.fechaActualISO(),
                         clienteEmpresa: '',
                         clienteRut: '',
                         clienteDireccion: '',
@@ -1106,6 +1111,9 @@
                         incluyeIva: false,
                         items: []
                     };
+                    this.itemSeleccionadoCatalogo = '';
+                    this.nuevoItem = { descripcion: '', cantidad: 1, unidad: 'gl', precioUnitario: 0 };
+                    this.filtroHistorial = '';
                     this.showToast('Nueva cotización en blanco lista');
                 },
 
@@ -1241,7 +1249,7 @@
                 enviarWhatsApp() {
                     const totalFormatted = this.formatearNumero(this.calcularTotal());
                     const cliente = this.cotizacion.clienteEmpresa || 'Cliente';
-                    const texto = `Hola, adjuntamos el detalle de la *Cotización N° ${this.cotizacion.correlativo}* para ${cliente}.\n\nMonto Total: *$ ${totalFormatted} CLP*\n\n_Generado por ${this.empresa.nombre}_`;
+                    const texto = `Hola, adjuntamos el detalle de la cotización para ${cliente}.\n\nMonto Total: *$ ${totalFormatted} CLP*\n\n_Generado por ${this.empresa.nombre}_`;
                     
                     const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
                     window.open(url, '_blank');
@@ -1250,8 +1258,8 @@
                 enviarEmail() {
                     const totalFormatted = this.formatearNumero(this.calcularTotal());
                     const cliente = this.cotizacion.clienteEmpresa || 'Cliente';
-                    const asunto = `Cotización N° ${this.cotizacion.correlativo} - ${this.empresa.nombre}`;
-                    const cuerpo = `Estimados ${cliente},\n\nJunto con saludar, hacemos entrega de la Cotización N° ${this.cotizacion.correlativo}.\n\nMonto Total: $ ${totalFormatted} CLP\n\nQuedamos atentos a sus comentarios.\n\nSaludos cordiales,\n${this.empresa.nombre}\nFono: ${this.empresa.fono}`;
+                    const asunto = `Cotización - ${this.empresa.nombre}`;
+                    const cuerpo = `Estimados ${cliente},\n\nJunto con saludar, hacemos entrega de la cotización solicitada.\n\nMonto Total: $ ${totalFormatted} CLP\n\nQuedamos atentos a sus comentarios.\n\nSaludos cordiales,\n${this.empresa.nombre}\nFono: ${this.empresa.fono}`;
 
                     const mailto = `mailto:?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
                     window.location.href = mailto;
