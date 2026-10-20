@@ -75,6 +75,14 @@
             pointer-events: none;
             opacity: 0.55;
         }
+
+        .app-card { transition: transform .2s ease, box-shadow .2s ease; }
+        .app-card:hover { box-shadow: 0 14px 30px rgba(15, 23, 42, .08); }
+        .topbar { background: linear-gradient(115deg, #0f172a 0%, #162b4d 58%, #075985 100%); }
+        .action-bar { position: sticky; top: 4.5rem; z-index: 30; backdrop-filter: blur(10px); }
+        @media (max-width: 768px) {
+            .action-bar { top: 0; }
+        }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col" x-data="cotizadorApp()" x-init="initApp()">
@@ -85,7 +93,7 @@
     </script>
 
     <!-- Header / Navbar -->
-    <header class="bg-slate-900 text-white shadow-md no-print sticky top-0 z-40">
+    <header class="topbar text-white shadow-md no-print sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo / Brand -->
@@ -177,7 +185,7 @@
         <div x-show="tab === 'editor'" class="space-y-6">
             
             <!-- Barra Superior de Acciones -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4 no-print">
+            <div class="action-bar bg-white/95 p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4 no-print">
                 <div class="flex items-center space-x-2">
                     <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Cotización Actual:</span>
                     <span class="font-mono text-sm bg-slate-100 text-slate-800 font-bold px-2.5 py-1 rounded border border-slate-300" x-text="cotizacion.correlativo"></span>
@@ -242,10 +250,15 @@
                                 <input type="text" x-model="cotizacion.clienteEmpresa" placeholder="Ej: UNIVERSIDAD DEL BIO BIO" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
                             </div>
 
-                            <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">RUT Cliente</label>
-                                    <input type="text" x-model="cotizacion.clienteRut" placeholder="Ej: 60.911.006-6" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                                    <div class="flex gap-2">
+                                        <input type="text" x-model="cotizacion.clienteRut" placeholder="Ej: 60.911.006-6" class="min-w-0 flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                                        <button @click="abrirBusquedaRut()" type="button" class="shrink-0 bg-sky-700 hover:bg-sky-800 text-white rounded-lg px-3 py-2 text-sm" title="Buscar cliente por RUT">
+                                            <i class="fa-solid fa-magnifying-glass"></i><span class="hidden sm:inline ml-1">Buscar</span>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-slate-600 mb-1">Encargado Por</label>
@@ -261,7 +274,7 @@
                     </div>
 
                     <!-- Selector de Productos / Servicios -->
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="app-card bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
                         <h3 class="font-bold text-slate-800 text-base border-b pb-2 flex items-center justify-between">
                             <span><i class="fa-solid fa-boxes-stacked text-sky-600 me-2"></i>Agregar Ítems</span>
                         </h3>
@@ -714,6 +727,39 @@
             </div>
         </div>
 
+        <!-- Modal de búsqueda rápida de clientes por RUT -->
+        <div x-show="rutModal.abierto" x-cloak x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4" @keydown.escape.window="rutModal.abierto = false">
+            <div @click.outside="rutModal.abierto = false" class="w-full max-w-xl rounded-2xl bg-white shadow-2xl overflow-hidden">
+                <div class="flex items-center justify-between bg-slate-900 px-5 py-4 text-white">
+                    <div>
+                        <h2 class="font-bold">Buscar cliente por RUT</h2>
+                        <p class="text-xs text-slate-300">Busca en clientes guardados e historial</p>
+                    </div>
+                    <button @click="rutModal.abierto = false" class="text-slate-300 hover:text-white" aria-label="Cerrar búsqueda"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="flex gap-2">
+                        <input x-model="rutModal.busqueda" @input="buscarClientesPorRut()" @keydown.enter="buscarClientesPorRut()" type="search" placeholder="Ej: 69.150.800-5" class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        <button @click="buscarClientesPorRut()" class="rounded-lg bg-sky-700 px-4 py-2 text-white hover:bg-sky-800"><i class="fa-solid fa-search"></i></button>
+                    </div>
+                    <p x-show="rutModal.mensaje" x-text="rutModal.mensaje" class="text-sm text-slate-500"></p>
+                    <div class="max-h-72 overflow-y-auto space-y-2">
+                        <template x-for="cliente in rutModal.resultados" :key="cliente.rut + cliente.nombre">
+                            <button @click="seleccionarCliente(cliente)" class="w-full rounded-xl border border-slate-200 p-3 text-left hover:border-sky-400 hover:bg-sky-50 transition">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div>
+                                        <p class="font-semibold text-slate-800" x-text="cliente.nombre"></p>
+                                        <p class="text-xs text-slate-500 mt-1" x-text="cliente.direccion || 'Sin dirección registrada'"></p>
+                                    </div>
+                                    <span class="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-xs font-mono text-slate-600" x-text="cliente.rut"></span>
+                                </div>
+                            </button>
+                        </template>
+                    </div>
+                    <p x-show="rutModal.resultados.length === 0 && !rutModal.mensaje" class="text-center text-sm text-slate-400 py-4">Escribe un RUT para comenzar la búsqueda.</p>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- JS Logic Application -->
@@ -813,6 +859,7 @@
 
                 // Historial de Cotizaciones
                 historial: [],
+                rutModal: { abierto: false, busqueda: '', resultados: [], mensaje: '' },
 
                 // Inicialización con LocalStorage
                 initApp() {
@@ -846,6 +893,47 @@
                     this.toast.type = type;
                     this.toast.show = true;
                     setTimeout(() => { this.toast.show = false; }, 3500);
+                },
+
+                abrirBusquedaRut() {
+                    this.rutModal.abierto = true;
+                    this.rutModal.busqueda = this.cotizacion.clienteRut || '';
+                    this.rutModal.mensaje = '';
+                    this.buscarClientesPorRut();
+                },
+
+                buscarClientesPorRut() {
+                    const consulta = (this.rutModal.busqueda || '').toLowerCase().replace(/[.\-\s]/g, '');
+                    if (!consulta) {
+                        this.rutModal.resultados = [];
+                        this.rutModal.mensaje = '';
+                        return;
+                    }
+
+                    const clientes = this.historial.map(cot => ({
+                        rut: cot.clienteRut || '', nombre: cot.clienteEmpresa || '', direccion: cot.clienteDireccion || ''
+                    })).filter(cliente => cliente.rut || cliente.nombre);
+                    const actuales = {
+                        rut: this.cotizacion.clienteRut,
+                        nombre: this.cotizacion.clienteEmpresa,
+                        direccion: this.cotizacion.clienteDireccion
+                    };
+                    clientes.push(actuales);
+                    const unicos = new Map();
+                    clientes.filter(cliente => {
+                        const rut = (cliente.rut || '').toLowerCase().replace(/[.\-\s]/g, '');
+                        return rut.includes(consulta) || (cliente.nombre || '').toLowerCase().includes(consulta);
+                    }).forEach(cliente => unicos.set(`${cliente.rut}-${cliente.nombre}`, cliente));
+                    this.rutModal.resultados = [...unicos.values()];
+                    this.rutModal.mensaje = this.rutModal.resultados.length ? `${this.rutModal.resultados.length} cliente(s) encontrado(s)` : 'No hay coincidencias guardadas.';
+                },
+
+                seleccionarCliente(cliente) {
+                    this.cotizacion.clienteRut = cliente.rut;
+                    this.cotizacion.clienteEmpresa = cliente.nombre;
+                    this.cotizacion.clienteDireccion = cliente.direccion;
+                    this.rutModal.abierto = false;
+                    this.showToast('Datos del cliente cargados');
                 },
 
                 // Funciones de Formateo
